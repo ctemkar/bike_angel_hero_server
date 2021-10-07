@@ -1,4 +1,4 @@
-/*jshint esversion: 8 */
+/*jshint esversion: 11 */
 
 let config = require('./config.js');
 const got = require('got');
@@ -40,12 +40,13 @@ function populateTable(stationJson) {
 
     stationDataArray.forEach(element => {
         try {
-            console.log(element.properties.bike_angels.score);
+            const score = element?.properties?.bike_angels?.score;
+            console.log(score);
 
-            if (element.properties.bike_angels.score) {
+            if (score) {
                 let properties = element.properties;
                 // console.log(element.properties.station.id, element.properties.bike_angels.score);
-                todo.push([element.properties.station.id, element.properties.bike_angels.score,
+                todo.push([element.properties.station.id, score,
                 properties.bike_angels_action, properties.bike_angels_points],
                 );
             }
