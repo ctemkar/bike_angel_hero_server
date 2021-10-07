@@ -70,14 +70,31 @@ function populateTable(stationJson) {
                     return console.error(err.message);
                 }
                 // get inserted id
-                console.log('Todo Id:' + results);
-                connection.pool.end();
+                // console.log('Todo Id:' + results);
+
             });
+            let getBestBikeStationCombos = 'call GetBestBikeStationCombos();';
+            connection.query(getBestBikeStationCombos, function (err, result) {
+                if (err) throw err;
+                // console.log(result);
+                Object.keys(result).forEach(function (key) {
+                    var
+                        row = result[key];
+                    // console.log(row);
+                    console.log('name: ' + row.station_name);
+                    console.log('points: ' + row.angel_points);
+                });
+            });
+
+            connection.pool.end();
         } catch (e) {
 
         }
 
+
+
     });
+
 
 
 
