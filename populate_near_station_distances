@@ -45,48 +45,14 @@ axios(config)
     });
 */
 const getDbConnection = async () => {
-    console.log('connecting to mysql');
+    // console.log('connecting to mysql');
     return await mysql.createConnection(config);
 };
 
 getNearLatLon();
 async function getNearLatLon() {
     console.log('start of program');
-    // let connection = mysql.createConnection(config);
 
-
-
-    /*
-        let sql = 'SELECT stationid, stationid_near, stationname, stationnamenear, latitude, longitude, latitude_near, longitude_near from stations_near'; // where stationid<1000';
-        let todo = [];
-    
-    
-    
-        connection.connect(function (err) {
-            try {
-                if (err) throw err;
-    
-                connection.query(sql, (err, result, fields) => {
-                    if (err) throw err;
-                    console.log(result[0]);
-    
-    
-    
-                    // connection.pool.end();
-    
-    
-                });
-            } catch (e) {
-    
-            }
-    
-            for (const row of result) {
-                console.log(row.stationid);
-                getDistances(row);
-            }
-    
-        });
-        */
 
     const getNearStations = async () => {
         console.log('Getting stations');
@@ -95,7 +61,7 @@ async function getNearLatLon() {
 
         const nearStations = await db.query(sql);
         await db.end();
-        console.log(nearStations);
+        // console.log(nearStations);
         return nearStations;
     };
     result = await getNearStations();
@@ -128,7 +94,7 @@ async function getDistances(row) {
         // console.log('Response: ' + response.body);
         const dbRow = JSON.parse(response.body);
         const element = dbRow.rows[0].elements[0];
-        // console.log(element.distance.value);
+        console.log(element.distance.value);
         // console.log(element.duration.value);
 
         const db = await getDbConnection();
