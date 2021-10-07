@@ -1,0 +1,152 @@
+/*jshint esversion: 8 */
+
+let config = require('./config.js');
+const got = require('got');
+http = require('http');
+const { Client, UnitSystem } = require("@googlemaps/google-maps-services-js");
+
+const mysql = require('promise-mysql');
+// var mysql = require('mysql');
+//const axios = require('axios');
+// var async = require("async");
+
+var apiKey = 'AIzaSyBmJPN6rokMq7Z6M2WpGrRs7LvzLypLToA';
+// apiKey = 'AIzaSyCXhrcn_cGFL4rE0TowWLbVMwV57a214yg';
+apiKey = 'AIzaSyD3V_4yM0uKCVGnGtDb6mCIK9sc87TxxYA';
+var startLat = 40.767272160000000;
+var startLon = -73.99392888000000;
+var origin = 'citibike: W 52 St & 11 Ave, NY';
+var destination = 'citibike: W 54 St & 11 Ave, NY';
+var nearLat = 40.768333000000000;
+var nearLon = -73.99392888000000;
+var units = encodeURIComponent('google.maps.UnitSystem.IMPERIAL');
+var sUrl = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins=' +
+    encodeURIComponent(startLat) + ',' + encodeURIComponent(startLon) +
+    '&destinations=' + encodeURIComponent(nearLat) + ',' + encodeURIComponent(nearLon) +
+    '&unitsystem=' + units + '&mode=walking&key=' + apiKey;
+
+//var sUrl = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins=' + encodeURIComponent(origin) +
+//    '&destinations=' + encodeURIComponent(destination) + '&mode=walking&key=' + apiKey;
+/*
+console.log(sUrl);
+var config = {
+    method: 'get',
+    url: sUrl,
+    headers: {},
+    api: apiKey
+};
+
+axios(config)
+    .then(function (response) {
+        console.log(JSON.stringify(response.data));
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
+*/
+const getDbConnection = async () => {
+    console.log('connecting to mysql');
+    return await mysql.createConnection(config);
+};
+
+getNearLatLon();
+async function getNearLatLon() {
+    console.log('start of program');
+    // let connection = mysql.createConnection(config);
+
+
+
+    /*
+        let sql = 'SELECT stationid, stationid_near, stationname, stationnamenear, latitude, longitude, latitude_near, longitude_near from stations_near'; // where stationid<1000';
+        let todo = [];
+    
+    
+    
+        connection.connect(function (err) {
+            try {
+                if (err) throw err;
+    
+                connection.query(sql, (err, result, fields) => {
+                    if (err) throw err;
+                    console.log(result[0]);
+    
+    
+    
+                    // connection.pool.end();
+    
+    
+                });
+            } catch (e) {
+    
+            }
+    
+            for (const row of result) {
+                console.log(row.stationid);
+                getDistances(row);
+            }
+    
+        });
+        */
+
+    const getNearStations = async () => {
+        console.log('Getting stations');
+        const db = await getDbConnection();
+        let sql = 'SELECT stationid, stationid_near, stationname, stationnamenear, latitude, longitude, latitude_near, longitude_near from stations_near WHERE google_distance IS NULL'; // where stationid<1000';
+
+        const nearStations = await db.query(sql);
+        await db.end();
+        console.log(nearStations);
+        return nearStations;
+    };
+    result = await getNearStations();
+    var BreakException = {};
+    for (const row of result) {
+        //console.log(row.stationid);
+        await getDistances(row);
+        // throw BreakException;
+    }
+}
+
+
+
+
+async function getDistances(row) {
+    var BreakException = {};
+
+    var googleDistanceUrl = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins=';
+
+    var sUrl = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins=' +
+        encodeURIComponent(row.latitude) + ',' + encodeURIComponent(row.longitude) +
+        '&destinations=' + encodeURIComponent(row.latitude_near) + ',' + encodeURIComponent(row.longitude_near) +
+        '&unitsystem=' + units + '&mode=walking&key=' + apiKey;
+    // console.log(sUrl);
+
+    try {
+        // console.log('getting data');
+        const response = await got(sUrl);
+        // response.statusCode.should.be.equal(200);
+        // console.log('Response: ' + response.body);
+        const dbRow = JSON.parse(response.body);
+        const element = dbRow.rows[0].elements[0];
+        // console.log(element.distance.value);
+        // console.log(element.duration.value);
+
+        const db = await getDbConnection();
+        // console.log(row);
+        let sql = 'UPDATE stations_near SET google_distance = ' + element.distance.value +
+            ', google_walking_time =' + element.duration.value +
+            ' WHERE stationid = ' + row.stationid + ' AND stationid_near = ' + row.stationid_near; // where stationid<1000';
+        // console.log(sql);
+        const updateQuery = await db.query(sql);
+        await db.end();
+
+    } catch (error) {
+        console.log('internal server error: ' + error);
+        //=> 'Internal server error ...'
+    }
+
+
+    // throw BreakException;
+
+}
+
