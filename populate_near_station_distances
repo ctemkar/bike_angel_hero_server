@@ -25,27 +25,9 @@ var sUrl = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins=' +
     '&destinations=' + encodeURIComponent(nearLat) + ',' + encodeURIComponent(nearLon) +
     '&unitsystem=' + units + '&mode=walking&key=' + apiKey;
 
-//var sUrl = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins=' + encodeURIComponent(origin) +
-//    '&destinations=' + encodeURIComponent(destination) + '&mode=walking&key=' + apiKey;
-/*
-console.log(sUrl);
-var config = {
-    method: 'get',
-    url: sUrl,
-    headers: {},
-    api: apiKey
-};
 
-axios(config)
-    .then(function (response) {
-        console.log(JSON.stringify(response.data));
-    })
-    .catch(function (error) {
-        console.log(error);
-    });
-*/
 const getDbConnection = async () => {
-    // console.log('connecting to mysql');
+    console.log('connecting to mysql');
     return await mysql.createConnection(config);
 };
 
@@ -66,17 +48,17 @@ async function getNearLatLon() {
     };
     result = await getNearStations();
     var BreakException = {};
+    const db = await getDbConnection();
     for (const row of result) {
         //console.log(row.stationid);
-        await getDistances(row);
+        await getDistances(row, db);
         // throw BreakException;
     }
+    await db.end();
 }
 
 
-
-
-async function getDistances(row) {
+async function getDistances(row, db) {
     var BreakException = {};
 
     var googleDistanceUrl = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins=';
@@ -88,23 +70,18 @@ async function getDistances(row) {
     // console.log(sUrl);
 
     try {
-        // console.log('getting data');
+
         const response = await got(sUrl);
-        // response.statusCode.should.be.equal(200);
-        // console.log('Response: ' + response.body);
         const dbRow = JSON.parse(response.body);
         const element = dbRow.rows[0].elements[0];
         console.log(element.distance.value);
         // console.log(element.duration.value);
-
-        const db = await getDbConnection();
         // console.log(row);
         let sql = 'UPDATE stations_near SET google_distance = ' + element.distance.value +
             ', google_walking_time =' + element.duration.value +
             ' WHERE stationid = ' + row.stationid + ' AND stationid_near = ' + row.stationid_near; // where stationid<1000';
         // console.log(sql);
         const updateQuery = await db.query(sql);
-        await db.end();
 
     } catch (error) {
         console.log('internal server error: ' + error);
