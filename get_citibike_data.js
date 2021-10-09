@@ -14,11 +14,11 @@ let stationData;
 (async () => {
     try {
         const stationData = await got(url);
-        // console.log(stationData.body);
+        console.log('Read citibike file: ' + stationData.body);
         populateTable(stationData.body);
         //=> '<!doctype html> ...'
     } catch (error) {
-        console.log(error.response.body);
+        console.log(error?.response?.body);
         //=> 'Internal server error ...'
     }
     // console.log(stationData.body);
@@ -29,8 +29,10 @@ function populateTable(stationJson) {
     var BreakException = {};
     jsonData = JSON.parse(stationJson);
 
-    var stationDataArray = jsonData.features;
 
+    var stationDataArray = jsonData.features;
+    // console.log(jsonData.features);
+    console.log('Stations: ' + stationDataArray.length);
 
     let connection = mysql.createConnection(config);
 
@@ -41,7 +43,7 @@ function populateTable(stationJson) {
     stationDataArray.forEach(element => {
         try {
             const score = element?.properties?.bike_angels?.score;
-            console.log(score);
+            // console.log(score);
 
             if (score) {
                 let properties = element.properties;
@@ -65,28 +67,32 @@ function populateTable(stationJson) {
                 if (err) throw err;
                 console.log("Table truncated");
             });
+            console.log('# of rows: ' + todo.length);
             connection.query(sql, [todo], (err, results, fields) => {
                 if (err) {
                     return console.error(err.message);
                 }
                 // get inserted id
                 // console.log('Todo Id:' + results);
-
+                console.log("Updated citibike data!");
             });
+
             let getBestBikeStationCombos = 'call GetBestBikeStationCombos();';
             connection.query(getBestBikeStationCombos, function (err, result) {
                 if (err) throw err;
-                // console.log(result);
+
                 Object.keys(result).forEach(function (key) {
                     var
                         row = result[key];
-                    // console.log(row);
-                    console.log('name: ' + row.station_name);
-                    console.log('points: ' + row.angel_points);
+                    console.log(row);
+                    // console.log('name: ' + row.station_name);
+                    // console.log('points: ' + row.angel_points);
                 });
+                connection.pool.end();
             });
 
-            connection.pool.end();
+
+
         } catch (e) {
 
         }

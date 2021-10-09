@@ -1,4 +1,4 @@
-/*jshint esversion: 8 */
+/*jshint esversion: 11 */
 
 let config = require('./config.js');
 const got = require('got');
@@ -25,16 +25,13 @@ var sUrl = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins=' +
     '&destinations=' + encodeURIComponent(nearLat) + ',' + encodeURIComponent(nearLon) +
     '&unitsystem=' + units + '&mode=walking&key=' + apiKey;
 
-
 const getDbConnection = async () => {
-    console.log('connecting to mysql');
+    // console.log('connecting to mysql');
     return await mysql.createConnection(config);
 };
 
 getNearLatLon();
 async function getNearLatLon() {
-    console.log('start of program');
-
 
     const getNearStations = async () => {
         console.log('Getting stations');
@@ -67,13 +64,13 @@ async function getDistances(row, db) {
         encodeURIComponent(row.latitude) + ',' + encodeURIComponent(row.longitude) +
         '&destinations=' + encodeURIComponent(row.latitude_near) + ',' + encodeURIComponent(row.longitude_near) +
         '&unitsystem=' + units + '&mode=walking&key=' + apiKey;
-    // console.log(sUrl);
+    // \console.log(sUrl);
 
     try {
 
         const response = await got(sUrl);
-        const dbRow = JSON.parse(response.body);
-        const element = dbRow.rows[0].elements[0];
+        const dbRow = JSON.parse(response?.body);
+        const element = dbRow?.rows[0]?.elements[0];
         console.log(element.distance.value);
         // console.log(element.duration.value);
         // console.log(row);
