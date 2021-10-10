@@ -64,7 +64,7 @@ async function getDistances(row, db) {
         encodeURIComponent(row.latitude) + ',' + encodeURIComponent(row.longitude) +
         '&destinations=' + encodeURIComponent(row.latitude_near) + ',' + encodeURIComponent(row.longitude_near) +
         '&unitsystem=' + units + '&mode=walking&key=' + apiKey;
-    // \console.log(sUrl);
+    // console.log(sUrl);
 
     try {
 
