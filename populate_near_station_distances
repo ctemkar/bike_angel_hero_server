@@ -6,13 +6,9 @@ http = require('http');
 const { Client, UnitSystem } = require("@googlemaps/google-maps-services-js");
 
 const mysql = require('promise-mysql');
-// var mysql = require('mysql');
-//const axios = require('axios');
-// var async = require("async");
 
 var apiKey = 'AIzaSyBmJPN6rokMq7Z6M2WpGrRs7LvzLypLToA';
-// apiKey = 'AIzaSyCXhrcn_cGFL4rE0TowWLbVMwV57a214yg';
-apiKey = 'AIzaSyD3V_4yM0uKCVGnGtDb6mCIK9sc87TxxYA';
+
 var startLat = 40.767272160000000;
 var startLon = -73.99392888000000;
 var origin = 'citibike: W 52 St & 11 Ave, NY';
