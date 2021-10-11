@@ -78,10 +78,43 @@ async function getBestBikeStationCombos(connection) {
     try {
 
         console.log('Getting best combos');
-        let getBestBikeStationCombos = 'call getBestBikeStationCombos()';
-        getBestBikeStationCombosResults = await connection.query(getBestBikeStationCombos);
+        let bestBikeStationCombos = 'call getBestBikeStationCombos()';
+        bestBikeStationCombosResults = await connection.query(bestBikeStationCombos);
+        console.log(bestBikeStationCombosResults.length);
+        res = bestBikeStationCombosResults[0];
+        // console.log(bestBikeStationCombosResults[0][5].angel_points);
+        //     angel_points: 6,
+        //     google_distance: 426,
+        //     walking_distance: 0.26,
+        //     walking_time: '5:49',
+        //     pickup_from: 'Tiebout Ave & E Fordham Road',
+        //     dropoff_to: 'Grand Concourse & E 192 St'
+        //   
+        var reo = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Bike Angel Combos</title></head><body>';
+        var table = '';
+        for (i = 0; i < res.length; i++) {
+            item = res[i];
+            // console.log("Row: " + i + "\n");
+            // console.log(res[i].angel_points);
+            // console.log(res[i].google_distance);
+            // console.log(res[i].walking_distance);
+            // console.log(res[i].walking_time);
+            // console.log(res[i].pickup_from);
+            // console.log(res[i].dropoff_to);
 
-        return getBestBikeStationCombosResults;
+            table += '<tr><td>' + item.angel_points + '</td><td>' + item.walking_distance + '</td><td>' +
+                item.walking_time + '</td><td>' + item.pickup_from +
+                '</td><td>' +
+                res[i].dropoff_to + '</td></tr>';
+
+            // throw BreakException;
+        }
+        table = '<table border="1"><tr><th>Points</th><th>Distance</th><th>Walk Time</th><<th>Pick up</th><th>Drop off</th></tr>' +
+            table + '</table>';
+
+        console.log(reo + table);
+
+        return reo + table + '</body></html>';
 
     } catch (e) {
         console.log(e);
@@ -98,9 +131,9 @@ async function getBestBikeStationCombos(connection) {
         todo = populateInsert(stationDataArray);
         console.log('Non-null rows to insert: ' + todo.length);
         const success = await insertRows(connection, todo);
-        const showResults = await getBestBikeStationCombos(connection);
+        const comboResults = await getBestBikeStationCombos(connection);
         await connection.end();
-        console.log(showResults);
+        // console.log(comboResults);
         console.log('Done');
     } catch (error) {
         console.log(error?.response?.body);
