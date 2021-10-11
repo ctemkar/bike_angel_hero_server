@@ -1,6 +1,7 @@
 {
+  "main": "index.js",
   "scripts": {
-    "start": "app.js"
+    "start": "index.js"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.2.5",
