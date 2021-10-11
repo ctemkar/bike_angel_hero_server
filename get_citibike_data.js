@@ -10,6 +10,7 @@ const mysql = require('promise-mysql');
 
 var BreakException = {}; // to break out of a loop since js doesn't have break statement
 
+var comboResults;
 const url = "https://layer.bicyclesharing.net/map/v1/nyc/map-inventory";
 
 const getDbConnection = async () => {
@@ -38,17 +39,17 @@ function populateInsert(stationDataArray) {
     stationDataArray.forEach(element => {
         try {
             const score = element?.properties?.bike_angels?.score;
-            // console.log(score);
+            // // console.log(score);
 
             if (score) {
                 let properties = element.properties;
-                // console.log(element.properties.station.id, element.properties.bike_angels.score);
+                // // console.log(element.properties.station.id, element.properties.bike_angels.score);
                 todo.push([element.properties.station.id, score,
                 properties.bike_angels_action, properties.bike_angels_points],
                 );
             }
         } catch (e) {
-            console.log(e);
+            // console.log(e);
         }
         // throw BreakException;
     });
@@ -60,27 +61,27 @@ function populateInsert(stationDataArray) {
 // insert current rows into current rows table
 async function insertRows(connection, todo) {
     try {
-        console.log('Connected to db');
+        // console.log('Connected to db');
         let truncateTable = ' truncate table stations_current';
         await connection.query(truncateTable);
-        console.log("Table truncated");
+        // console.log("Table truncated");
         let sql = 'INSERT INTO stations_current (stationid, bike_angelsscore, bike_angels_action, bike_angels_points) VALUES ?';
         await connection.query(sql, [todo]);
 
-        console.log("Inserted rows into station_current");
+        // console.log("Inserted rows into station_current");
 
     } catch (e) {
-        console.log(e);
+        // console.log(e);
     }
 }
 
 async function getBestBikeStationCombos(connection) {
     try {
 
-        console.log('Getting best combos');
+        // console.log('Getting best combos');
         let bestBikeStationCombos = 'call getBestBikeStationCombos()';
         bestBikeStationCombosResults = await connection.query(bestBikeStationCombos);
-        console.log(bestBikeStationCombosResults.length);
+        // console.log(bestBikeStationCombosResults.length);
         res = bestBikeStationCombosResults[0];
         // console.log(bestBikeStationCombosResults[0][5].angel_points);
         //     angel_points: 6,
@@ -102,43 +103,45 @@ async function getBestBikeStationCombos(connection) {
             // console.log(res[i].pickup_from);
             // console.log(res[i].dropoff_to);
 
-            table += '<tr><td>' + item.angel_points + '</td><td>' + item.walking_distance + '</td><td>' +
+            table += '<tr><td>' + item.angel_points + '</td><td>' + item.google_distance + '</td><td>' +
                 item.walking_time + '</td><td>' + item.pickup_from +
                 '</td><td>' +
                 res[i].dropoff_to + '</td></tr>';
 
             // throw BreakException;
         }
-        table = '<table border="1"><tr><th>Points</th><th>Distance</th><th>Walk Time</th><<th>Pick up</th><th>Drop off</th></tr>' +
+        table = '<table border="1"><tr><th>Points</th><th>Distance</th><th>Walk Time</th><th>Pick up</th><th>Drop off</th></tr>' +
             table + '</table>';
 
-        console.log(reo + table);
+        // console.log(reo + table);
 
         return reo + table + '</body></html>';
 
     } catch (e) {
-        console.log(e);
+        // console.log(e);
     }
 
 }
 
-(async () => {
+module.exports = (async () => {
     try {
         let stationData = await getCitbikeStationsFromUrl();
         var stationDataArray = stationData.features;
-        console.log('# of stations: ' + stationDataArray.length);
+        // console.log('# of stations: ' + stationDataArray.length);
         const connection = await getDbConnection();
         todo = populateInsert(stationDataArray);
-        console.log('Non-null rows to insert: ' + todo.length);
+        // console.log('Non-null rows to insert: ' + todo.length);
         const success = await insertRows(connection, todo);
-        const comboResults = await getBestBikeStationCombos(connection);
+        comboResults = await getBestBikeStationCombos(connection);
+        // module.exports = comboResults;
         await connection.end();
-        // console.log(comboResults);
-        console.log('Done');
+        console.log(comboResults);
+        // console.log('Done');
+        return comboResults;
     } catch (error) {
-        console.log(error?.response?.body);
+        // console.log(error?.response?.body);
         //=> 'Internal server error ...'
     }
 })();
 
-
+// module.exports = comboResults;
