@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start": "app.js"
+  },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.2.5",
     "got": "^11.8.2",
