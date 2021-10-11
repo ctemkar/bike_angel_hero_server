@@ -139,9 +139,8 @@ module.exports = (async () => {
         // console.log('Done');
         return comboResults;
     } catch (error) {
-        // console.log(error?.response?.body);
+        console.log(error?.response?.body);
         //=> 'Internal server error ...'
     }
 })();
 
-// module.exports = comboResults;
