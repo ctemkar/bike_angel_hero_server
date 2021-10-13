@@ -6,6 +6,7 @@
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.2.5",
     "got": "^11.8.2",
-    "promise-mysql": "^5.0.4"
+    "promise-mysql": "^5.0.4",
+    "request": "^2.88.2"
   }
 }
