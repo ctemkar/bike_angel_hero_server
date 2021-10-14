@@ -91,7 +91,14 @@ async function getBestBikeStationCombos(connection) {
         //     pickup_from: 'Tiebout Ave & E Fordham Road',
         //     dropoff_to: 'Grand Concourse & E 192 St'
         //   
-        var reo = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Bike Angel Combos</title></head><body>';
+        var reo = '<!DOCTYPE html><html lang="en"><head>' +
+            '<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
+            '<link rel="stylesheet" href="/static/tableformat.css">' +
+            '<script src="/static/sorttable.js"></script>' +
+            '<title>Bike Angel Combos</title>' +
+            '</head>' +
+            '<body> ';
+
         var table = '';
         const googleMapsDirectionsUrl = "https://www.google.com/maps/dir/?api=1&travelmode=bicycling";
         for (i = 0; i < res.length; i++) {
@@ -114,9 +121,10 @@ async function getBestBikeStationCombos(connection) {
 
             // throw BreakException;
         }
-        table = '<table border="1"><tr><th>Points</th><th>Distance</th><th>Walk Time</th><th>Pick up</th><th>Drop off</th></tr>' +
-            table + '</table>';
 
+        table = '<table class="sortable"><thead><tr>' +
+            '<th>Points</th><th>Distance</th><th>Walk Time</th><th>Pick up</th><th>Drop off</th></tr></thead><tbody>' +
+            table + '</tbody></table>';
         // console.log(reo + table);
 
         return reo + table + '</body></html>';

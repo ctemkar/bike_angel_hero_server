@@ -124,3 +124,7 @@ dist
 .pnp.*
 get_citibike_data 2.js
 package-lock.json
+t2.html
+public/t.html
+get_citibike_data.js
+public/t.html
