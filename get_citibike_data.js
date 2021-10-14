@@ -93,6 +93,7 @@ async function getBestBikeStationCombos(connection) {
         //   
         var reo = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Bike Angel Combos</title></head><body>';
         var table = '';
+        const googleMapsDirectionsUrl = "https://www.google.com/maps/dir/?api=1&travelmode=bicycling";
         for (i = 0; i < res.length; i++) {
             item = res[i];
             // console.log("Row: " + i + "\n");
@@ -103,7 +104,10 @@ async function getBestBikeStationCombos(connection) {
             // console.log(res[i].pickup_from);
             // console.log(res[i].dropoff_to);
 
-            table += '<tr><td>' + item.angel_points + '</td><td>' + item.google_distance + '</td><td>' +
+            const directionLink = '<a href=' + googleMapsDirectionsUrl + "&origin=" + encodeURIComponent("Citi Bike: " + item.pickup_from) +
+                "&destination=" + encodeURIComponent("Citi Bike: " + item.dropoff_to) + '>' + item.google_distance + '</a';
+
+            table += '<tr><td>' + item.angel_points + '</td><td>' + directionLink + '</td><td>' +
                 item.walking_time + '</td><td>' + item.pickup_from +
                 '</td><td>' +
                 res[i].dropoff_to + '</td></tr>';
