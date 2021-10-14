@@ -1,10 +1,11 @@
 {
   "main": "index.js",
   "scripts": {
-    "start": "index.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.2.5",
+    "express": "^4.17.1",
     "got": "^11.8.2",
     "node-geocoder": "^3.27.0",
     "promise-mysql": "^5.0.4",
