@@ -9,6 +9,8 @@ const mysql = require('promise-mysql');
 
 var apiKey = 'AIzaSyBmJPN6rokMq7Z6M2WpGrRs7LvzLypLToA';
 
+var startLat = 40.767272160000000;
+var startLon = -73.99392888000000;
 var origin = 'citibike: W 52 St & 11 Ave, NY';
 var destination = 'citibike: W 54 St & 11 Ave, NY';
 var nearLat = 40.768333000000000;

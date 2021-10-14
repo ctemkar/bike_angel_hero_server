@@ -91,7 +91,7 @@ async function getBestBikeStationCombos(connection) {
         //     pickup_from: 'Tiebout Ave & E Fordham Road',
         //     dropoff_to: 'Grand Concourse & E 192 St'
         //   
-        var reo = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Bike Angel Combos</title></head><body>';
+        var reo = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Bike Angel Combos</title></head><body>';
         var table = '';
         const googleMapsDirectionsUrl = "https://www.google.com/maps/dir/?api=1&travelmode=bicycling";
         for (i = 0; i < res.length; i++) {
