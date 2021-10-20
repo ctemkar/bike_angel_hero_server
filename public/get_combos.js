@@ -1,6 +1,6 @@
 /*jshint esversion: 11 */
 
-let config = require('./config.js');
+let config = require('./config');
 const got = require('got');
 
 // const { features } = require('process');
@@ -26,7 +26,7 @@ async function getCitbikeStationsFromUrl() {
         // populateTable(stationData.body);
         //=> '<!doctype html> ...'
     } catch (error) {
-        console.log(error?.response?.body);
+        console.log(error);
         //=> 'Internal server error ...'
     }
 
@@ -75,6 +75,8 @@ async function insertRows(connection, todo) {
     }
 }
 
+
+
 async function getBestBikeStationCombos(connection) {
     try {
 
@@ -91,16 +93,7 @@ async function getBestBikeStationCombos(connection) {
         //     pickup_from: 'Tiebout Ave & E Fordham Road',
         //     dropoff_to: 'Grand Concourse & E 192 St'
         //   
-        var reo = '<!DOCTYPE html><html lang="en"><head>' +
-            '<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
-            '<link rel="stylesheet" href="/static/tableformat.css">' +
-            '<script src="/static/sorttable.js"></script>' +
-            '<title>Bike Angel Combos</title>' +
-            '</head>' +
-            '<body> ';
-
-        var table = '';
-        const googleMapsDirectionsUrl = "https://www.google.com/maps/dir/?api=1&travelmode=bicycling";
+        /*
         for (i = 0; i < res.length; i++) {
             item = res[i];
             // console.log("Row: " + i + "\n");
@@ -128,14 +121,15 @@ async function getBestBikeStationCombos(connection) {
         // console.log(reo + table);
 
         return reo + table + '</body></html>';
-
+*/
+        return res;
     } catch (e) {
         // console.log(e);
     }
 
 }
 
-module.exports = (async () => {
+async function getCombos() {
     try {
         let stationData = await getCitbikeStationsFromUrl();
         var stationDataArray = stationData.features;
@@ -147,12 +141,14 @@ module.exports = (async () => {
         comboResults = await getBestBikeStationCombos(connection);
         // module.exports = comboResults;
         await connection.end();
-        console.log(comboResults);
+        // console.log(comboResults);
         // console.log('Done');
         return comboResults;
     } catch (error) {
-        console.log(error?.response?.body);
+        console.log(error);
         //=> 'Internal server error ...'
     }
-})();
+}
+
+module.exports = getCombos();
 
