@@ -1,16 +1,35 @@
 {
-  "main": "index.cjs",
+  "name": "node-js-getting-started",
+  "version": "0.3.0",
+  "description": "A sample Node.js app using Express 4",
+  "engines": {
+    "node": "14.x"
+  },
+  "main": "index.js",
   "scripts": {
-    "start": "nodemon index.cjs"
+    "start": "nodemon index.js",
+    "test": "node test.js"
   },
   "dependencies": {
     "@googlemaps/google-maps-services-js": "^3.2.5",
-    "express": "^4.17.1",
+    "ejs": "^3.1.5",
+    "express": "^4.15.2",
     "got": "^11.8.2",
-    "mysql2": "^2.3.1",
-    "node-geocoder": "^3.27.0",
     "nodemon": "^2.0.14",
-    "promise-mysql": "^5.0.4",
-    "request": "^2.88.2"
-  }
+    "promise-mysql": "^5.0.4"
+  },
+  "devDependencies": {
+    "got": "^11.3.0",
+    "tape": "^4.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heroku/node-js-getting-started"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "license": "MIT"
 }
