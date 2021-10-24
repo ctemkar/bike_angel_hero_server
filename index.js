@@ -32,12 +32,12 @@ express()
     var context = {};
     let lat = req?.query?.lat;
     let lon = req?.query?.lon;
-    console.log(`lat = ${lat}, lon = ${lon}`);
+    // console.log(`lat = ${lat}, lon = ${lon}`);
     let qry = 'call ComboWithOptions(NULL, NULL, 0);';
     if (lat && lon) {
       qry = `call ComboWithOptions(${lat}, ${lon}, 0);`;
     }
-    console.log(`Query: ${qry}`);
+    //console.log(`Query: ${qry}`);
 
     pool.query(qry, function (err, rows, fields) {
       if (err) {
