@@ -26,7 +26,7 @@ async function getCitbikeStationsFromUrl() {
         // populateTable(stationData.body);
         //=> '<!doctype html> ...'
     } catch (error) {
-        console.log(error);
+        console.log(error?.response?.body);
         //=> 'Internal server error ...'
     }
 
@@ -81,10 +81,24 @@ async function getBestBikeStationCombos(connection) {
     try {
 
         // console.log('Getting best combos');
-        let bestBikeStationCombos = 'call getBestBikeStationCombos()';
+        let bestBikeStationCombos = "select b.`bike_angels_points` + c.`bike_angels_points` as angel_points," +
+            "a.google_distance, `google_walking_time` walking_time," +
+            "`stationname` pickup_from, `stationnamenear` dropoff_to, " +
+            "a.latitude, a.longitude " +
+            " from stations_near a " +
+            " inner join stations_current b ON a.stationid = b.stationid " +
+            " inner join stations_current c ON a.stationid_near = c.stationid " +
+            " where " +
+            " b.`bike_angels_action` = 'take' AND c.`bike_angels_action` = 'give'" +
+            " and c.`bike_angels_points` is not null" +
+            " and `google_distance` is not null " +
+            " order by angel_points DESC, `google_distance` ASC" +
+            " LIMIT 300;";
+        console.log(bestBikeStationCombos);
+
         bestBikeStationCombosResults = await connection.query(bestBikeStationCombos);
-        // console.log(bestBikeStationCombosResults.length);
-        res = bestBikeStationCombosResults[0];
+        console.log(bestBikeStationCombosResults.length);
+        res = bestBikeStationCombosResults;
 
         return res;
 
@@ -96,13 +110,7 @@ async function getBestBikeStationCombos(connection) {
 
 module.exports = (async () => {
     try {
-        let stationData = await getCitbikeStationsFromUrl();
-        var stationDataArray = stationData.features;
-        // console.log('# of stations: ' + stationDataArray.length);
         const connection = await getDbConnection();
-        todo = populateInsert(stationDataArray);
-        // console.log('Non-null rows to insert: ' + todo.length);
-        const success = await insertRows(connection, todo);
         comboResults = await getBestBikeStationCombos(connection);
         // module.exports = comboResults;
         await connection.end();

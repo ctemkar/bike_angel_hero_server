@@ -26,7 +26,7 @@ async function getCitbikeStationsFromUrl() {
         // populateTable(stationData.body);
         //=> '<!doctype html> ...'
     } catch (error) {
-        console.log(error?.response?.body);
+        console.log(error);
         //=> 'Internal server error ...'
     }
 
@@ -151,7 +151,7 @@ module.exports = (async () => {
         // console.log('Done');
         return comboResults;
     } catch (error) {
-        console.log(error?.response?.body);
+        console.log(error);
         //=> 'Internal server error ...'
     }
 })();
