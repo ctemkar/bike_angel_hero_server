@@ -30,7 +30,16 @@ express()
   .get('/getappcombos', async function (req, res, next) {
     let getcombo = await require('./public/getcombdatafromdb.js');
     var context = {};
-    pool.query('call GetBestBikeStationCombos()', function (err, rows, fields) {
+    let lat = req?.query?.lat;
+    let lon = req?.query?.lon;
+    console.log(`lat = ${lat}, lon = ${lon}`);
+    let qry = 'call ComboWithOptions(NULL, NULL, 0);';
+    if (lat && lon) {
+      qry = `call ComboWithOptions(${lat}, ${lon}, 0);`;
+    }
+    console.log(`Query: ${qry}`);
+
+    pool.query(qry, function (err, rows, fields) {
       if (err) {
         next(err);
         return;
